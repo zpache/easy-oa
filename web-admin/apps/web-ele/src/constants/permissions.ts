@@ -44,6 +44,18 @@ export const ATTENDANCE_PERMISSIONS = {
   shiftUpdate: 'attendance:shift:update',
 } as const;
 
+export const DOC_PERMISSIONS = {
+  docCreate: 'doc:doc:create',
+  docDelete: 'doc:doc:delete',
+  docList: 'doc:doc:list',
+  docPublish: 'doc:doc:publish',
+  docUpdate: 'doc:doc:update',
+  folderCreate: 'doc:folder:create',
+  folderDelete: 'doc:folder:delete',
+  folderAcl: 'doc:folder:acl',
+  folderUpdate: 'doc:folder:update',
+} as const;
+
 export const SYSTEM_PERMISSIONS = {
   deptCreate: 'system:dept:create',
   deptDelete: 'system:dept:delete',

@@ -9,8 +9,9 @@ import java.util.Set;
  * 实际校验的权限码，用于超级管理员兜底和前端按钮展示。新增后端校验时必须同步登记，
  * 否则非 ADMIN 角色即使授权也无法通过 authority 校验，ADMIN 也不会默认获得该码。
  * <p>
- * 各模块权限码分段：system:xxx 系统管理；后续审批中心 approval:xxx、
- * 行政 office:xxx、考勤 attendance:xxx、日程 schedule:xxx 等随模块落地登记。
+ * 各模块权限码分段：system:xxx 系统管理；审批 approval:xxx（对接 easy-bpm）、
+ * 行政 office:xxx、考勤 attendance:xxx、日程 schedule:xxx（个人操作无需权限码）、
+ * 文档 doc:xxx，随模块落地登记。
  */
 public final class PermissionCodes {
 
@@ -43,7 +44,12 @@ public final class PermissionCodes {
             "attendance:correction:apply", "attendance:correction:audit",
             "attendance:leavetype:list", "attendance:leavetype:create",
             "attendance:leavetype:update", "attendance:leavetype:delete",
-            "attendance:balance:adjust"
+            "attendance:balance:adjust",
+
+            // 文档（读接口登录即可，权限码用于菜单按钮与管理端写校验）
+            "doc:doc:list", "doc:folder:create", "doc:folder:update",
+            "doc:folder:delete", "doc:folder:acl",
+            "doc:doc:create", "doc:doc:update", "doc:doc:delete", "doc:doc:publish"
     );
 
     private PermissionCodes() {
