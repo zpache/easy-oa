@@ -4,34 +4,36 @@
 
 - **后端**：Java 25 + Spring Boot 4.1.2 + MyBatis-Plus + MySQL，Spring Security + JWT 无状态认证
 - **前端**：Vue3 + Vben Admin（Element Plus），动态菜单/按钮权限
-- **端口**：admin 接口服务 `8091`，context-path `/oa`
+- **端口**：后端接口服务 `8091`（context-path `/oa`），前端 dev server `5778`
 
 ## 模块
 
 ```
 backend/easy-oa-admin   # 管理后台接口服务
+web-admin/apps/web-ele  # 管理后台前端（vben web-ele，包名 @easy-oa/web-ele）
 db/                     # easy_oa.sql 建库脚本 + migrations/ 幂等增量迁移（不入库，仅本地）
 docs/FEATURES.md        # 功能清单与分期计划
-web-admin/              # 管理后台前端（规划中）
 ```
 
-## 快速开始（后端）
+## 快速开始
 
 ```bash
 # 1. 初始化数据库
 mysql -uroot -p < db/easy_oa.sql
 
-# 2. 配置本机密码
+# 2. 后端：配置本机密码
 cp backend/easy-oa-admin/src/main/resources/application-local.yml.example \
    backend/easy-oa-admin/src/main/resources/application-local.yml
 #    填入 spring.datasource.password
 
-# 3. 编译并启动
+# 3. 启动后端
 cd backend && mvn -pl easy-oa-admin spring-boot:run
-# 或 java -jar easy-oa-admin/target/easy-oa-admin-1.0.0.jar
-
-# 4. 访问
 # 接口文档 http://localhost:8091/oa/swagger-ui.html
+
+# 4. 前端（pnpm workspace，依赖已在 node_modules 就绪）
+cd web-admin && pnpm -F @easy-oa/web-ele run dev
+# 打开 http://localhost:5778
+
 # 默认账号 admin / admin123
 ```
 

@@ -10,7 +10,7 @@
 > ├── backend/            # Maven 单体多模块（当前：easy-oa-admin，端口 8091，context-path /oa）
 > ├── db/                 # easy_oa.sql 建库脚本 + migrations/ 幂等增量迁移
 > ├── docs/               # 设计文档
-> └── web-admin/          # 管理后台前端（规划中，vben web-ele 同款结构）
+> └── web-admin/          # 管理后台前端（@easy-oa/web-ele，dev 端口 5778，代理 /oa → 8091）
 > ```
 
 ## 分期与功能清单
@@ -26,7 +26,8 @@
 | 角色管理 | 角色增删改查、菜单/按钮授权 | ✅ 后端 |
 | 菜单管理 | 树形菜单（catalog/menu/button/link/embedded），动态路由下发 | ✅ 后端 |
 | 日志审计 | 操作日志（AOP 自动采集）、登录日志查询 | ✅ 后端 |
-| 管理后台前端 | vben web-ele 同款前端，动态菜单 + 上述页面 | ⏳ 下一阶段 |
+| 工作台 | 登录后首页：问候语、系统管理快捷入口、后续模块预告 | ✅ 前端 |
+| 管理后台前端 | vben web-ele 同款前端（@easy-oa/web-ele，dev 端口 5778），动态菜单 + 员工/部门/角色/菜单/日志页面 | ✅ 前端 |
 
 ### Phase 2：审批中心（OA 核心）
 
