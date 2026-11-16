@@ -1,0 +1,60 @@
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+
+### Mac ###
+.DS_Store
+
+### 本地私有配置（含数据库密码等，禁止提交）###
+application-local.yml
+application-local.yaml
+**/application-local.yml
+!**/application-local.yml.example
+application-prod.yml
+**/application-prod.yml
+
+### Log ###
+logs/
+*.log
+
+### 本地上传文件
+uploads/
+
+### 数据库脚本（建库脚本 + 迁移，不随开源仓库分发，仅本地保留）
+db/
+*.sql
+!**/src/test/resources/*.sql
+!**/src/main/resources/*.sql
+
+### 本地环境变量覆盖（含本机局域网 IP 等，禁止提交）
+**/.env*.local
+node_modules/
+dist/
