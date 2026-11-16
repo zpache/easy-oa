@@ -34,7 +34,16 @@ public final class PermissionCodes {
             "office:room:list", "office:room:create", "office:room:update", "office:room:delete",
             "office:booking:list", "office:booking:create", "office:booking:cancel",
             "office:asset:list", "office:asset:create", "office:asset:update",
-            "office:asset:delete", "office:asset:assign", "office:asset:scrap"
+            "office:asset:delete", "office:asset:assign", "office:asset:scrap",
+
+            // 考勤
+            "attendance:shift:list", "attendance:shift:create", "attendance:shift:update",
+            "attendance:shift:delete", "attendance:shift:bind",
+            "attendance:record:list",
+            "attendance:correction:apply", "attendance:correction:audit",
+            "attendance:leavetype:list", "attendance:leavetype:create",
+            "attendance:leavetype:update", "attendance:leavetype:delete",
+            "attendance:balance:adjust"
     );
 
     private PermissionCodes() {

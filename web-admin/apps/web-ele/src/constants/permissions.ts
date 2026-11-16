@@ -28,6 +28,22 @@ export const OFFICE_PERMISSIONS = {
   roomUpdate: 'office:room:update',
 } as const;
 
+export const ATTENDANCE_PERMISSIONS = {
+  balanceAdjust: 'attendance:balance:adjust',
+  correctionApply: 'attendance:correction:apply',
+  correctionAudit: 'attendance:correction:audit',
+  leaveTypeCreate: 'attendance:leavetype:create',
+  leaveTypeDelete: 'attendance:leavetype:delete',
+  leaveTypeList: 'attendance:leavetype:list',
+  leaveTypeUpdate: 'attendance:leavetype:update',
+  recordList: 'attendance:record:list',
+  shiftBind: 'attendance:shift:bind',
+  shiftCreate: 'attendance:shift:create',
+  shiftDelete: 'attendance:shift:delete',
+  shiftList: 'attendance:shift:list',
+  shiftUpdate: 'attendance:shift:update',
+} as const;
+
 export const SYSTEM_PERMISSIONS = {
   deptCreate: 'system:dept:create',
   deptDelete: 'system:dept:delete',
