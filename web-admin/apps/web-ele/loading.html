@@ -1,0 +1,79 @@
+<style data-app-loading="inject-css">
+  .oa-loading {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    background: #f5f8ff;
+    color: #18345b;
+    font-family: system-ui, sans-serif;
+    transition: opacity 0.3s ease;
+  }
+
+  .dark .oa-loading {
+    background: #0d111b;
+    color: #e4eeff;
+  }
+
+  .oa-loading.hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .oa-loading img {
+    width: 72px;
+    height: 72px;
+  }
+
+  .oa-loading-title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+
+  .oa-loading-progress {
+    width: 100px;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 3px;
+    background: #cfe0fc;
+  }
+
+  .oa-loading-progress::after {
+    display: block;
+    width: 40%;
+    height: 100%;
+    border-radius: inherit;
+    background: #2675eb;
+    content: '';
+    animation: oa-loading-progress 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes oa-loading-progress {
+    to {
+      transform: translateX(150%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .oa-loading-progress::after {
+      width: 100%;
+      animation: none;
+    }
+  }
+</style>
+<div
+  class="oa-loading"
+  id="__app-loading__"
+  role="status"
+  aria-label="正在加载办公系统"
+>
+  <img src="%BASE_URL%brand/oa-logo.svg" alt="" width="72" height="72" />
+  <div class="oa-loading-title">%VITE_APP_TITLE%</div>
+  <div class="oa-loading-progress" aria-hidden="true"></div>
+</div>

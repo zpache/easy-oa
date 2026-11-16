@@ -13,7 +13,10 @@
     />
     <!-- 由 vite 注入 VITE_APP_TITLE 变量，在 .env 文件内配置 -->
     <title>%VITE_APP_TITLE%</title>
-    <link rel="icon" href="/favicon.ico" />
+    <meta name="theme-color" content="#1555d5" />
+    <link rel="icon" href="%BASE_URL%favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%brand/oa-logo.svg" />
+    <link rel="apple-touch-icon" href="%BASE_URL%brand/apple-touch-icon.png" />
   </head>
   <body>
     <div id="app"></div>

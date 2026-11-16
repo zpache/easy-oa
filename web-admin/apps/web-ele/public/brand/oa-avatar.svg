@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+  <title>默认办公头像</title>
+  <defs>
+    <clipPath id="circle">
+      <circle cx="64" cy="64" r="64"/>
+    </clipPath>
+    <linearGradient id="background" x1="16" y1="0" x2="112" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#EDF5FF"/>
+      <stop offset="1" stop-color="#CFE4FF"/>
+    </linearGradient>
+    <linearGradient id="jacket" x1="33" y1="81" x2="98" y2="128" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3989F5"/>
+      <stop offset="1" stop-color="#1555D5"/>
+    </linearGradient>
+  </defs>
+  <g clip-path="url(#circle)">
+  <circle cx="64" cy="64" r="64" fill="url(#background)"/>
+  <circle cx="64" cy="49" r="22" fill="#397CE5"/>
+  <path d="M26 116a38 38 0 0 1 76 0v12H26v-12Z" fill="url(#jacket)"/>
+  <path d="m50 80 14 14 14-14-6 48H56l-6-48Z" fill="#F5FAFF"/>
+  <path d="m60 92 4 2 4-2-1 9 3 16-6 6-6-6 3-16-1-9Z" fill="#1555D5"/>
+  <rect x="82" y="101" width="12" height="9" rx="2" fill="#60E2C2"/>
+  </g>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <title>Easy OA 办公系统</title>
+  <defs>
+    <linearGradient id="tile" x1="4" y1="2" x2="60" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#338BFF"/>
+      <stop offset="1" stop-color="#1555D5"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="17" fill="url(#tile)"/>
+  <rect x="2.5" y="2.5" width="59" height="59" rx="16.5" stroke="#FFF" stroke-opacity=".16"/>
+  <path d="M21 16h16l9 9v20a5 5 0 0 1-5 5H21a5 5 0 0 1-5-5V21a5 5 0 0 1 5-5Z" fill="#FFF"/>
+  <path d="M37 16v6a3 3 0 0 0 3 3h6" fill="#BCD9FF"/>
+  <path d="M24 28h6M24 35h13" stroke="#397CE5" stroke-width="3.5" stroke-linecap="round"/>
+  <circle cx="44" cy="44" r="12" fill="#1555D5"/>
+  <circle cx="44" cy="44" r="9.5" fill="#60E2C2"/>
+  <path d="m39.5 44 3 3 6-6" stroke="#124CA8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

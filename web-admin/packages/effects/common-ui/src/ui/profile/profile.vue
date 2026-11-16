@@ -30,7 +30,7 @@ const tabsValue = defineModel<string>('modelValue');
       <Card class="w-1/6 flex-none">
         <div class="mt-4 flex-col-center h-40 gap-4">
           <VbenAvatar
-            :src="userInfo?.avatar ?? preferences.app.defaultAvatar"
+            :src="userInfo?.avatar || preferences.app.defaultAvatar"
             class="size-20"
           />
           <span class="text-lg font-semibold">
