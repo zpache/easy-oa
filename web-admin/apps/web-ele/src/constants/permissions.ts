@@ -5,6 +5,12 @@ export const DASHBOARD_PERMISSIONS = {
 } as const;
 
 export const OFFICE_PERMISSIONS = {
+  assetAssign: 'office:asset:assign',
+  assetCreate: 'office:asset:create',
+  assetDelete: 'office:asset:delete',
+  assetList: 'office:asset:list',
+  assetScrap: 'office:asset:scrap',
+  assetUpdate: 'office:asset:update',
   bookingCancel: 'office:booking:cancel',
   bookingCreate: 'office:booking:create',
   bookingList: 'office:booking:list',

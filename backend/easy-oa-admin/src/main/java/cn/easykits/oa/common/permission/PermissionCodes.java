@@ -32,7 +32,9 @@ public final class PermissionCodes {
             "office:notice:delete", "office:notice:publish", "office:notice:withdraw",
             "office:notice:top", "office:notice:portal",
             "office:room:list", "office:room:create", "office:room:update", "office:room:delete",
-            "office:booking:list", "office:booking:create", "office:booking:cancel"
+            "office:booking:list", "office:booking:create", "office:booking:cancel",
+            "office:asset:list", "office:asset:create", "office:asset:update",
+            "office:asset:delete", "office:asset:assign", "office:asset:scrap"
     );
 
     private PermissionCodes() {
