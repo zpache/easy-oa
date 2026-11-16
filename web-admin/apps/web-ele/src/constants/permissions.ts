@@ -4,6 +4,24 @@ export const DASHBOARD_PERMISSIONS = {
   workbench: 'dashboard:workbench',
 } as const;
 
+export const OFFICE_PERMISSIONS = {
+  bookingCancel: 'office:booking:cancel',
+  bookingCreate: 'office:booking:create',
+  bookingList: 'office:booking:list',
+  noticeCreate: 'office:notice:create',
+  noticeDelete: 'office:notice:delete',
+  noticeList: 'office:notice:list',
+  noticePortal: 'office:notice:portal',
+  noticePublish: 'office:notice:publish',
+  noticeTop: 'office:notice:top',
+  noticeUpdate: 'office:notice:update',
+  noticeWithdraw: 'office:notice:withdraw',
+  roomCreate: 'office:room:create',
+  roomDelete: 'office:room:delete',
+  roomList: 'office:room:list',
+  roomUpdate: 'office:room:update',
+} as const;
+
 export const SYSTEM_PERMISSIONS = {
   deptCreate: 'system:dept:create',
   deptDelete: 'system:dept:delete',

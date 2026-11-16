@@ -25,7 +25,14 @@ public final class PermissionCodes {
             "system:role:delete", "system:role:status",
             "system:menu:list", "system:menu:create", "system:menu:update", "system:menu:delete",
             "system:dept:list", "system:dept:create", "system:dept:update", "system:dept:delete",
-            "system:operlog:list", "system:loginlog:list"
+            "system:operlog:list", "system:loginlog:list",
+
+            // 行政办公
+            "office:notice:list", "office:notice:create", "office:notice:update",
+            "office:notice:delete", "office:notice:publish", "office:notice:withdraw",
+            "office:notice:top", "office:notice:portal",
+            "office:room:list", "office:room:create", "office:room:update", "office:room:delete",
+            "office:booking:list", "office:booking:create", "office:booking:cancel"
     );
 
     private PermissionCodes() {
