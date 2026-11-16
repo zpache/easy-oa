@@ -27,8 +27,8 @@ import java.time.format.DateTimeParseException;
  * 反序列化保持宽松：带 T 的 ISO、空格分隔、只到分钟、只有日期都能解析，
  * 这样历史前端代码（DatePicker 的 valueFormat 是 ISO）不会被这次改动打断。
  * <p>
- * 注意：只作用于 easy-admin-admin，小程序端（easy-admin-api）的输出格式保持不变，
- * 避免 iOS 小程序里 {@code new Date('2026-10-30 09:03:51')} 解析失败。
+ * 注意：只作用于 easy-oa-admin 管理端；小程序/H5 端如有独立输出诉求，
+ * 在对应服务单独定制，避免 iOS 里 {@code new Date('2026-10-30 09:03:51')} 解析失败。
  */
 @Configuration
 public class JacksonConfig {
@@ -39,9 +39,9 @@ public class JacksonConfig {
     private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @Bean
-    public JsonMapperBuilderCustomizer easyMallDateTimeCustomizer() {
+    public JsonMapperBuilderCustomizer easyOaDateTimeCustomizer() {
         return builder -> {
-            SimpleModule module = new SimpleModule("easyMallDateTime");
+            SimpleModule module = new SimpleModule("easyOaDateTime");
             module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DATE_TIME));
             module.addSerializer(LocalDate.class, new LocalDateSerializer(DATE));
             module.addSerializer(LocalTime.class, new LocalTimeSerializer(TIME));

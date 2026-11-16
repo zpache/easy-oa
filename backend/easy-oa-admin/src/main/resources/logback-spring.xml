@@ -8,13 +8,12 @@
   2. 日志格式、滚动策略、级别全部在本文件维护，application*.yml 里不再写 logging.* 配置，避免两处打架。
   3. 输出三份：控制台（便于容器收集）、全量文件、错误文件（只收 ERROR，便于告警）。
   4. 同一请求的日志用 MDC 中的 traceId 串联，格式见下方 pattern。
-  5. 本文件与 easy-admin-api 的同名文件保持一致，差异只由 spring.application.name 决定；
-     改动时两边同步（无公共模块，暂不抽 common）。
+  5. 日志文件名等差异只由 spring.application.name 决定，无需多处维护。
 -->
 <configuration scan="false" scanPeriod="60 seconds">
 
-    <!-- 应用名决定日志文件名：easy-admin-admin / easy-admin-api -->
-    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="easy-admin"/>
+    <!-- 应用名决定日志文件名，如 easy-oa-admin -->
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="easy-oa"/>
     <!-- 日志目录：可用 logging.file.path 或环境变量 LOGGING_FILE_PATH 覆盖，默认工作目录下 logs -->
     <springProperty scope="context" name="LOG_PATH" source="logging.file.path" defaultValue="logs"/>
 

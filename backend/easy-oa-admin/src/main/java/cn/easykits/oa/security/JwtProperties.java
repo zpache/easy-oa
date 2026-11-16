@@ -16,7 +16,7 @@ public class JwtProperties {
     private String secret;
 
     /** 签发者 */
-    private String issuer = "easy-admin-admin";
+    private String issuer = "easy-oa-admin";
 
     /** 管理端令牌有效期 */
     private Duration adminExpire = Duration.ofHours(12);
