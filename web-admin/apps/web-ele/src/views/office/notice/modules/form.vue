@@ -5,12 +5,13 @@ import { computed, ref } from 'vue';
 
 import { useVbenDrawer } from '@vben/common-ui';
 
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 import { useVbenForm } from '#/adapter/form';
 import {
   createNotice,
   getNoticeDetail,
+  publishNotice,
   updateNotice,
 } from '#/api/office/notice';
 import { getDeptList } from '#/api/system/dept';
@@ -137,9 +138,27 @@ const [Drawer, drawerApi] = useVbenDrawer({
       top: values.top ?? 0,
     };
     try {
-      await (isEdit.value
-        ? updateNotice(editing.value!.id, payload)
-        : createNotice(payload));
+      let created: null | { id: number } = null;
+      if (isEdit.value) {
+        await updateNotice(editing.value!.id, payload);
+      } else {
+        created = await createNotice(payload);
+      }
+      // 新建默认进草稿箱：主动引导发布，避免「建完员工看不到」的断链
+      if (created?.id) {
+        drawerApi.lock(false);
+        try {
+          await ElMessageBox.confirm(
+            '公告已保存为草稿。草稿不会出现在员工端的公告中心，是否立即发布？',
+            '发布确认',
+            { confirmButtonText: '立即发布', cancelButtonText: '暂不发布', type: 'info' },
+          );
+          await publishNotice(created.id);
+          ElMessage.success('已发布，员工端公告中心可见');
+        } catch {
+          ElMessage.info('已保存为草稿，可在列表中点击「发布」上线');
+        }
+      }
       emit('success');
       drawerApi.close();
     } finally {

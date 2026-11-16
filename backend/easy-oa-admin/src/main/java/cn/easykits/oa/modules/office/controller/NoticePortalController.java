@@ -35,6 +35,13 @@ public class NoticePortalController {
         return Result.ok(noticeService.portalPage(pageNum, pageSize, category));
     }
 
+    @Operation(summary = "我的未读公告数")
+    @GetMapping("/unread-count")
+    @PreAuthorize("hasAuthority('office:notice:portal')")
+    public Result<Long> unreadCount() {
+        return Result.ok(noticeService.portalUnreadCount());
+    }
+
     @Operation(summary = "公告详情（查看即记录已读）")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('office:notice:portal')")

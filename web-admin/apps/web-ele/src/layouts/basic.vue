@@ -11,6 +11,7 @@ import { useAccessStore, useUserStore } from '@vben/stores';
 import { $t } from '#/locales';
 import { useAuthStore } from '#/store';
 import LoginForm from '#/views/_core/authentication/login.vue';
+import NoticeBell from './notice-bell.vue';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -89,6 +90,9 @@ watch(
         @logout="handleLogout"
         @clear-preferences-and-logout="handleLogout"
       />
+    </template>
+    <template #notification>
+      <NoticeBell />
     </template>
     <template #extra>
       <AuthenticationLoginExpiredModal

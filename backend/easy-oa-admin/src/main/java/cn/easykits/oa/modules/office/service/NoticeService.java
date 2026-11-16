@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -225,6 +226,37 @@ public class NoticeService extends ServiceImpl<OfficeNoticeMapper, OfficeNotice>
         return PageResult.of(page, notice -> new NoticePortalVO(
                 notice.getId(), notice.getTitle(), notice.getCategory(), notice.getTop(),
                 notice.getPublishAt(), notice.getExpireAt(), readNoticeIds.containsKey(notice.getId())));
+    }
+
+    /**
+     * 当前用户未读公告数：已发布、在可见范围内、未过期且尚未读过。
+     * 用于顶栏铃铛红点与工作台提醒。
+     */
+    public long portalUnreadCount() {
+        Long userId = requireUserId();
+        SysUser user = sysUserMapper.selectById(userId);
+        List<Long> deptNoticeIds = user == null || user.getDeptId() == null ? List.of()
+                : scopeMapper.selectList(Wrappers.<OfficeNoticeScope>lambdaQuery()
+                        .eq(OfficeNoticeScope::getDeptId, user.getDeptId())).stream()
+                .map(OfficeNoticeScope::getNoticeId).distinct().toList();
+        List<Long> visibleIds = list(Wrappers.<OfficeNotice>lambdaQuery()
+                .select(OfficeNotice::getId)
+                .eq(OfficeNotice::getStatus, STATUS_PUBLISHED)
+                .and(w -> w
+                        .eq(OfficeNotice::getScopeType, SCOPE_ALL)
+                        .or(w2 -> w2.eq(OfficeNotice::getScopeType, SCOPE_DEPT)
+                                .in(!deptNoticeIds.isEmpty(), OfficeNotice::getId, deptNoticeIds)))
+                .and(w -> w.isNull(OfficeNotice::getExpireAt)
+                        .or(w2 -> w2.gt(OfficeNotice::getExpireAt, LocalDateTime.now()))))
+                .stream().map(OfficeNotice::getId).toList();
+        if (visibleIds.isEmpty()) {
+            return 0;
+        }
+        Set<Long> readIds = readMapper.selectList(Wrappers.<OfficeNoticeRead>lambdaQuery()
+                        .eq(OfficeNoticeRead::getUserId, userId)
+                        .in(OfficeNoticeRead::getNoticeId, visibleIds)).stream()
+                .map(OfficeNoticeRead::getNoticeId).collect(Collectors.toSet());
+        return visibleIds.stream().filter(id -> !readIds.contains(id)).count();
     }
 
     /**

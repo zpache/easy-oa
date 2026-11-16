@@ -125,6 +125,11 @@ async function getPortalNoticeDetail(id: number) {
   return requestClient.get<Recordable<any>>(`/office/notice/portal/${id}`);
 }
 
+/** 我的未读公告数（顶栏铃铛 / 工作台提醒） */
+async function getPortalUnreadCount() {
+  return requestClient.get<number>('/office/notice/portal/unread-count');
+}
+
 export {
   createNotice,
   deleteNotice,
@@ -134,6 +139,7 @@ export {
   getNoticeReads,
   getPortalNoticeDetail,
   getPortalNoticePage,
+  getPortalUnreadCount,
   publishNotice,
   toggleNoticeTop,
   updateNotice,
