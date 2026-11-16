@@ -46,11 +46,11 @@ public class AssetController {
         return Result.ok(assetService.pageQuery(pageNum, pageSize, keyword, category, status));
     }
 
-    @Operation(summary = "新增资产（默认在库）")
+    @Operation(summary = "新增资产（编号留空自动生成，默认在库）")
     @PostMapping
     @PreAuthorize("hasAuthority('office:asset:create')")
-    public Result<Long> create(@Valid @RequestBody AssetForm form) {
-        return Result.ok(assetService.create(form).getId());
+    public Result<AssetVO> create(@Valid @RequestBody AssetForm form) {
+        return Result.ok(assetService.create(form));
     }
 
     @Operation(summary = "编辑资产基础信息")

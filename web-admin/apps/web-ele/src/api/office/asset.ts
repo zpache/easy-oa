@@ -54,7 +54,10 @@ async function getAssetPage(params: Recordable<any>) {
 }
 
 async function createAsset(data: OfficeAssetApi.AssetPayload) {
-  return requestClient.post<{ id: number }>('/office/asset', data);
+  return requestClient.post<{ assetNo: string; id: number }>(
+    '/office/asset',
+    data,
+  );
 }
 
 async function updateAsset(id: number, data: OfficeAssetApi.AssetPayload) {

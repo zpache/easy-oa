@@ -2,15 +2,14 @@ package cn.easykits.oa.modules.office.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
  * 资产新增/编辑表单。
+ * 编号可留空：后端按 ZC-yyyyMMdd-序号 自动生成；存量/特殊编号可手动维护。
  */
 public record AssetForm(
-        @NotBlank(message = "资产编号不能为空")
         @Size(max = 40, message = "资产编号过长")
         String assetNo,
 

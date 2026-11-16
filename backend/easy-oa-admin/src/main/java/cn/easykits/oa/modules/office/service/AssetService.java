@@ -65,13 +65,17 @@ public class AssetService extends ServiceImpl<OfficeAssetMapper, OfficeAsset> {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public OfficeAsset create(AssetForm form) {
-        checkAssetNoUnique(form.assetNo(), null);
+    public AssetVO create(AssetForm form) {
+        // 编号留空则按 ZC-yyyyMMdd-序号 自动生成；手填编号做唯一校验
+        String assetNo = StringUtils.hasText(form.assetNo())
+                ? form.assetNo().trim() : generateAssetNo();
+        checkAssetNoUnique(assetNo, null);
         OfficeAsset asset = new OfficeAsset();
         applyForm(asset, form);
+        asset.setAssetNo(assetNo);
         asset.setStatus(STATUS_IN_STOCK);
         save(asset);
-        return asset;
+        return toVO(asset);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -219,8 +223,26 @@ public class AssetService extends ServiceImpl<OfficeAssetMapper, OfficeAsset> {
         }
     }
 
-    private void checkAssetNoUnique(String assetNo, Long excludeId) {
-        Long count = count(Wrappers.<OfficeAsset>lambdaQuery()
+    /**
+     * 自动编号：ZC-yyyyMMdd-序号（当天已有资产数 +1，撞号时递增重试）。
+     */
+    private String generateAssetNo() {
+        String datePart = java.time.LocalDate.now()
+                .format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE);
+        long todayCount = count(Wrappers.<OfficeAsset>lambdaQuery()
+                .ge(OfficeAsset::getCreatedAt, java.time.LocalDate.now().atStartOfDay()));
+        int seq = (int) todayCount + 1;
+        String candidate = "ZC-%s-%03d".formatted(datePart, seq);
+        int retry = 0;
+        while (count(Wrappers.<OfficeAsset>lambdaQuery()
+                .eq(OfficeAsset::getAssetNo, candidate)) > 0 && retry++ < 100) {
+            seq += 1;
+            candidate = "ZC-%s-%03d".formatted(datePart, seq);
+        }
+        return candidate;
+    }
+
+    private void checkAssetNoUnique(String assetNo, Long excludeId) {        Long count = count(Wrappers.<OfficeAsset>lambdaQuery()
                 .eq(OfficeAsset::getAssetNo, assetNo)
                 .ne(excludeId != null, OfficeAsset::getId, excludeId));
         if (count > 0) {

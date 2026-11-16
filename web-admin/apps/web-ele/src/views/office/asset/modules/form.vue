@@ -23,11 +23,11 @@ const [Form, formApi] = useVbenForm({
       component: 'Input',
       componentProps: {
         maxlength: 40,
-        placeholder: '全局唯一，如 ZC-20261116-001',
+        placeholder: '留空自动生成（ZC-日期-序号）',
       },
       fieldName: 'assetNo',
+      help: '建议留空由系统生成；存量或特殊编号可手动填写（需全局唯一）',
       label: '资产编号',
-      rules: 'required',
     },
     {
       component: 'Input',
@@ -111,7 +111,7 @@ const [Drawer, drawerApi] = useVbenDrawer({
     }
     const values = await formApi.getValues();
     const payload = {
-      assetNo: values.assetNo,
+      assetNo: values.assetNo?.trim() || undefined,
       brandModel: values.brandModel || undefined,
       category: values.category,
       location: values.location || undefined,
@@ -122,10 +122,13 @@ const [Drawer, drawerApi] = useVbenDrawer({
     };
     drawerApi.lock();
     try {
-      await (isEdit.value
-        ? updateAsset(editing.value!.id, payload)
-        : createAsset(payload));
-      ElMessage.success(isEdit.value ? '已保存' : '已新增，资产状态为「在库」');
+      if (isEdit.value) {
+        await updateAsset(editing.value!.id, payload);
+        ElMessage.success('已保存');
+      } else {
+        const created = await createAsset(payload);
+        ElMessage.success(`已新增，资产编号 ${created?.assetNo ?? ''}，状态为「在库」`);
+      }
       emit('success');
       drawerApi.close();
     } finally {
