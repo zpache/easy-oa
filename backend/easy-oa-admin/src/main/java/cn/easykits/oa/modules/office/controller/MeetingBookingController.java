@@ -44,8 +44,10 @@ public class MeetingBookingController {
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime endDate,
             @RequestParam(required = false) Integer status,
+            @RequestParam(required = false) String state,
             @RequestParam(required = false) Long userId) {
-        return Result.ok(meetingBookingService.pageQuery(pageNum, pageSize, roomId, startDate, endDate, status, userId));
+        return Result.ok(meetingBookingService.pageQuery(pageNum, pageSize, roomId, startDate, endDate,
+                status, state, userId));
     }
 
     @Operation(summary = "创建预约")

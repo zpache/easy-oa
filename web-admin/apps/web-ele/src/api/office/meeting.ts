@@ -32,6 +32,8 @@ export namespace OfficeMeetingApi {
     roomId: number;
     roomName?: string;
     startAt: string;
+    /** 展示状态：后端按时间推导，cancelled/ended/ongoing/upcoming */
+    state?: 'cancelled' | 'ended' | 'ongoing' | 'upcoming';
     status: 0 | 1;
     title: string;
     userId: number;

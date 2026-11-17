@@ -16,6 +16,11 @@ public record MeetingBookingVO(
         LocalDateTime startAt,
         LocalDateTime endAt,
         Integer status,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        /**
+         * 展示状态（由时间推导，不落库）：
+         * cancelled 已取消 / ended 已结束 / ongoing 进行中 / upcoming 待开始（已预约）。
+         */
+        String state
 ) {
 }

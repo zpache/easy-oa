@@ -35,7 +35,12 @@ import {
 import { usePermission } from '#/composables/use-permission';
 import { OFFICE_PERMISSIONS } from '#/constants/permissions';
 
-import { useColumns, useGridFormSchema } from './data';
+import {
+  bookingStateMeta,
+  canCancelBooking,
+  useColumns,
+  useGridFormSchema,
+} from './data';
 import Form from './modules/form.vue';
 
 dayjs.locale('zh-cn');
@@ -254,6 +259,12 @@ function onColumnClick(e: MouseEvent, day: dayjs.Dayjs) {
     Math.floor(offsetY / PX_PER_MIN / SLOT_MINUTES) * SLOT_MINUTES;
   const startMin = Math.min(minute, DAY_END - 60);
   const endMin = startMin + 60;
+  const slotStart = day.startOf('day').add(startMin, 'minute');
+  // 过去的时间段不允许发起预约（后端冲突校验只管重叠，不管是否已过期）
+  if (slotStart.isBefore(dayjs())) {
+    ElMessage.warning('该时段已过去，请选择当前或未来的时间段');
+    return;
+  }
   // 与已有会议重叠时拦截，直接提示
   const conflict = dayColumns.value.some(
     (column) =>
@@ -364,7 +375,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
             pageSize: page.pageSize,
             roomId: formValues?.roomId,
             startDate: formValues?.startDate,
-            status: formValues?.status,
+            state: formValues?.state,
           });
         },
       },
@@ -525,6 +536,14 @@ function fmtMinute(minute: number) {
                   v-for="event in column.bookings"
                   :key="event.booking.id"
                   class="absolute cursor-pointer overflow-hidden rounded border border-primary/40 bg-primary/10 px-1 py-0.5 hover:bg-primary/20"
+                  :class="[
+                    event.booking.state === 'ended'
+                      ? 'opacity-50 saturate-50'
+                      : '',
+                    event.booking.state === 'ongoing'
+                      ? 'ring-1 ring-primary'
+                      : '',
+                  ]"
                   :style="eventStyle(event)"
                   @click.stop="openDetail(event)"
                 >
@@ -593,15 +612,17 @@ function fmtMinute(minute: number) {
           {{ detailBooking.participants || '-' }}
         </ElDescriptionsItem>
         <ElDescriptionsItem label="状态">
-          <ElTag :type="detailBooking.status === 1 ? 'success' : 'info'">
-            {{ detailBooking.status === 1 ? '已预约' : '已取消' }}
+          <ElTag :type="bookingStateMeta(detailBooking.state).tagType">
+            {{ bookingStateMeta(detailBooking.state).label }}
           </ElTag>
         </ElDescriptionsItem>
       </ElDescriptions>
       <template #footer>
         <ElButton @click="detailVisible = false">关闭</ElButton>
         <ElButton
-          v-if="(canCancel || canCreate) && detailBooking?.status === 1"
+          v-if="
+            (canCancel || canCreate) && canCancelBooking(detailBooking?.state)
+          "
           type="danger"
           @click="onCancelFromDetail"
         >

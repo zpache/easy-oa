@@ -50,15 +50,52 @@ export function useGridFormSchema(): VbenFormSchema[] {
       componentProps: {
         allowClear: true,
         options: [
-          { label: '已预约', value: 1 },
-          { label: '已取消', value: 0 },
+          { label: '已预约（未结束）', value: 'active' },
+          { label: '已结束', value: 'ended' },
+          { label: '已取消', value: 'cancelled' },
         ],
       },
-      fieldName: 'status',
+      fieldName: 'state',
       label: '状态',
     },
   ];
 }
+
+/**
+ * 预约展示状态：由结束时间推导，后端返回（cancelled / ended / ongoing / upcoming）。
+ * 表格标签与详情弹窗共用，避免两处各写一套判断。
+ */
+export const BOOKING_STATE_META = {
+  cancelled: { label: '已取消', tagType: 'info' },
+  ended: { label: '已结束', tagType: 'info' },
+  ongoing: { label: '进行中', tagType: 'primary' },
+  upcoming: { label: '已预约', tagType: 'success' },
+} as const;
+
+/** 后端 state 为空（老数据/异常）时按「已预约」兜底 */
+export function bookingStateMeta(state?: string) {
+  const key = (state ?? 'upcoming') as keyof typeof BOOKING_STATE_META;
+  return BOOKING_STATE_META[key] ?? BOOKING_STATE_META.upcoming;
+}
+
+/** 只有未结束且未取消的预约可以取消 */
+export function canCancelBooking(state?: string) {
+  return state === 'ongoing' || state === 'upcoming';
+}
+
+/** CellTag 的 color 取值（映射到 ElTag type）：default/error/processing/success/warning */
+const BOOKING_STATE_OPTIONS = Object.entries(BOOKING_STATE_META).map(
+  ([value, meta]) => ({
+    color:
+      meta.tagType === 'primary'
+        ? 'processing'
+        : meta.tagType === 'success'
+          ? 'success'
+          : 'default',
+    label: meta.label,
+    value,
+  }),
+);
 
 /**
  * 预约单表格列
@@ -107,13 +144,14 @@ export function useColumns(
       width: 170,
     },
     {
+      align: 'center',
       cellRender: {
         name: 'CellTag',
+        options: BOOKING_STATE_OPTIONS,
       },
-      field: 'status',
-      formatter: ({ row }) => (row.status === 1 ? '已预约' : '已取消'),
+      field: 'state',
       title: '状态',
-      width: 90,
+      width: 100,
     },
     {
       align: 'center',
@@ -128,7 +166,7 @@ export function useColumns(
           {
             code: 'cancel',
             show: (row: OfficeMeetingApi.Booking) =>
-              (canCancel || canCreate) && row.status === 1,
+              (canCancel || canCreate) && canCancelBooking(row.state),
             text: '取消',
           },
         ],
