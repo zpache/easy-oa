@@ -558,6 +558,11 @@ function fmtMinute(minute: number) {
     <!-- 列表视图（保留原有表格） -->
     <Grid v-else table-title="会议室预约">
       <template #toolbar-tools>
+        <!-- 视图切换在两种模式下都要可见，否则切到列表后无法切回日历 -->
+        <ElRadioGroup v-model="viewMode" class="mr-2" size="default">
+          <ElRadioButton value="calendar">日历</ElRadioButton>
+          <ElRadioButton value="list">列表</ElRadioButton>
+        </ElRadioGroup>
         <ElButton
           v-access:code="OFFICE_PERMISSIONS.bookingCreate"
           type="primary"
