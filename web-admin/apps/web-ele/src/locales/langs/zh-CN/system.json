@@ -80,6 +80,8 @@
     "link": "外链地址",
     "iframeSrc": "内嵌地址",
     "operation": "操作",
-    "append": "新增下级"
+    "append": "新增下级",
+    "moveUp": "上移",
+    "moveDown": "下移"
   }
 }

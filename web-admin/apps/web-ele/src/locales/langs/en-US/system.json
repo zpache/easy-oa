@@ -80,6 +80,8 @@
     "link": "Link URL",
     "iframeSrc": "Iframe URL",
     "operation": "Action",
-    "append": "Add Child"
+    "append": "Add Child",
+    "moveUp": "Move Up",
+    "moveDown": "Move Down"
   }
 }

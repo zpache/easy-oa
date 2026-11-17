@@ -135,6 +135,33 @@ async function deleteMenu(id: number) {
 }
 
 /**
+ * 菜单上移 / 下移（后端会重排同级排序值）
+ */
+async function moveMenu(id: number, direction: 'down' | 'up') {
+  return requestClient.post(`/system/menu/${id}/move`, null, {
+    params: { direction },
+  });
+}
+
+/**
+ * 设置菜单排序值
+ */
+async function updateMenuOrder(id: number, order: number) {
+  return requestClient.put(`/system/menu/${id}/order`, null, {
+    params: { order },
+  });
+}
+
+/**
+ * 批量排序（拖拽后提交节点的新上级与同级顺序）
+ */
+async function sortMenus(
+  items: Array<{ id: number; order: number; pid?: number }>,
+) {
+  return requestClient.put('/system/menu/sort', items);
+}
+
+/**
  * 菜单树转下拉选项（el-tree-select 用）
  */
 function toTreeOptions(
@@ -157,6 +184,9 @@ export {
   getMenuListByUser,
   isMenuNameExists,
   isMenuPathExists,
+  moveMenu,
+  sortMenus,
   toTreeOptions,
   updateMenu,
+  updateMenuOrder,
 };

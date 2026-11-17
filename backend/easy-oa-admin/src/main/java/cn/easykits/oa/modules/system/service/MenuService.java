@@ -16,6 +16,7 @@ import cn.easykits.oa.mapper.SysRoleMenuMapper;
 import cn.easykits.oa.mapper.SysUserMapper;
 import cn.easykits.oa.mapper.SysUserRoleMapper;
 import cn.easykits.oa.modules.system.dto.MenuForm;
+import cn.easykits.oa.modules.system.dto.MenuSortItem;
 import cn.easykits.oa.modules.system.vo.MenuMeta;
 import cn.easykits.oa.modules.system.vo.MenuRouteVO;
 import cn.easykits.oa.modules.system.vo.MenuVO;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -195,6 +197,118 @@ public class MenuService extends ServiceImpl<SysMenuMapper, SysMenu> {
         removeById(id);
         // 同步清理角色授权关系
         sysRoleMenuMapper.delete(Wrappers.<SysRoleMenu>lambdaQuery().eq(SysRoleMenu::getMenuId, id));
+    }
+
+    /**
+     * 上移 / 下移：与相邻的同级菜单交换位置，并把该层级的排序值统一重排为 10、20、30…。
+     * <p>
+     * 重排是为了兼容历史数据里排序值重复（都是 0）的情况——只交换两个值的话
+     * 相等时交换等于没动，重排后每层顺序永远明确。
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void move(Long id, String direction) {
+        boolean up = "up".equalsIgnoreCase(direction);
+        if (!up && !"down".equalsIgnoreCase(direction)) {
+            throw new BusinessException("排序方向只能是 up 或 down");
+        }
+        SysMenu menu = getById(id);
+        if (menu == null) {
+            throw new BusinessException(ResultCode.DATA_NOT_FOUND, "菜单不存在");
+        }
+        List<SysMenu> siblings = list(Wrappers.<SysMenu>lambdaQuery()
+                .eq(SysMenu::getPid, menu.getPid() == null ? 0L : menu.getPid())
+                .orderByAsc(SysMenu::getOrderNo)
+                .orderByAsc(SysMenu::getId));
+        int index = -1;
+        for (int i = 0; i < siblings.size(); i++) {
+            if (Objects.equals(siblings.get(i).getId(), id)) {
+                index = i;
+                break;
+            }
+        }
+        if (index < 0) {
+            throw new BusinessException(ResultCode.DATA_NOT_FOUND, "菜单不存在");
+        }
+        int target = up ? index - 1 : index + 1;
+        if (target < 0 || target >= siblings.size()) {
+            throw new BusinessException(up ? "已经是第一个了" : "已经是最后一个了");
+        }
+        Collections.swap(siblings, index, target);
+        renumber(siblings);
+    }
+
+    /**
+     * 直接设置排序值（列表内联编辑，数字越小越靠前）。
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void updateOrderNo(Long id, Integer order) {
+        SysMenu menu = getById(id);
+        if (menu == null) {
+            throw new BusinessException(ResultCode.DATA_NOT_FOUND, "菜单不存在");
+        }
+        menu.setOrderNo(order == null || order < 0 ? 0 : order);
+        if (!updateById(menu)) {
+            throw new BusinessException(ResultCode.DATA_CONFLICT, "数据已被其他人修改，请刷新后重试");
+        }
+    }
+
+    /**
+     * 拖拽排序：前端提交「节点 → 目标上级 + 同级顺序」的结果（允许跨层级），这里统一落库。
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void sort(List<MenuSortItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        Map<Long, SysMenu> byId = list().stream()
+                .collect(Collectors.toMap(SysMenu::getId, menu -> menu, (a, b) -> a));
+        for (MenuSortItem item : items) {
+            if (item == null || item.id() == null) {
+                continue;
+            }
+            SysMenu menu = byId.get(item.id());
+            if (menu == null) {
+                continue;
+            }
+            Long pid = item.pid() == null ? 0L : item.pid();
+            assertNotUnderSelf(item.id(), pid, byId);
+            menu.setPid(pid);
+            menu.setOrderNo(item.order() == null || item.order() < 0 ? 0 : item.order());
+            if (!updateById(menu)) {
+                throw new BusinessException(ResultCode.DATA_CONFLICT, "菜单结构已被其他人修改，请刷新后重试");
+            }
+        }
+    }
+
+    /**
+     * 防环：不允许把节点挂到自身或自身的子孙下面，否则菜单树会出现循环、递归建树爆栈。
+     */
+    private void assertNotUnderSelf(Long id, Long pid, Map<Long, SysMenu> byId) {
+        Long cursor = pid;
+        int guard = 0;
+        while (cursor != null && cursor != 0 && guard++ < 100) {
+            if (Objects.equals(cursor, id)) {
+                throw new BusinessException("不能把菜单移动到自身或其下级");
+            }
+            SysMenu current = byId.get(cursor);
+            cursor = current == null ? null : current.getPid();
+        }
+    }
+
+    /**
+     * 按列表顺序重写排序值（10、20、30…），只更新有变化的行。
+     */
+    private void renumber(List<SysMenu> siblings) {
+        for (int i = 0; i < siblings.size(); i++) {
+            SysMenu sibling = siblings.get(i);
+            int order = (i + 1) * 10;
+            if (!Objects.equals(sibling.getOrderNo(), order)) {
+                sibling.setOrderNo(order);
+                if (!updateById(sibling)) {
+                    throw new BusinessException(ResultCode.DATA_CONFLICT, "排序失败，请刷新后重试");
+                }
+            }
+        }
     }
 
     public boolean nameExists(String name, Long excludeId) {

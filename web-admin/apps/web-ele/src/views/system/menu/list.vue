@@ -8,10 +8,15 @@ import type { SystemMenuApi } from '#/api/system/menu';
 import { Page, useVbenDrawer } from '@vben/common-ui';
 import { IconifyIcon, Plus } from '@vben/icons';
 
-import { ElButton, ElMessage, ElMessageBox } from 'element-plus';
+import { ElButton, ElInputNumber, ElMessage, ElMessageBox } from 'element-plus';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { deleteMenu, getMenuList } from '#/api/system/menu';
+import {
+  deleteMenu,
+  getMenuList,
+  moveMenu,
+  updateMenuOrder,
+} from '#/api/system/menu';
 import { SYSTEM_PERMISSIONS } from '#/constants/permissions';
 import { $t } from '#/locales';
 
@@ -52,7 +57,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   } as VxeTableGridOptions,
 });
 
-function onActionClick({
+async function onActionClick({
   code,
   row,
 }: OnActionClickParams<SystemMenuApi.SystemMenu>) {
@@ -69,6 +74,35 @@ function onActionClick({
       formDrawerApi.setData(row).open();
       break;
     }
+    case 'moveDown':
+    case 'moveUp': {
+      try {
+        await moveMenu(row.id, code === 'moveUp' ? 'up' : 'down');
+        gridApi.query();
+      } catch {
+        // 边界（已在最前/最后）由后端返回提示，请求拦截器统一弹出
+      }
+      break;
+    }
+  }
+}
+
+/**
+ * 内联修改排序值：数字越小越靠前，保存后刷新整棵树。
+ */
+async function onOrderChange(
+  row: SystemMenuApi.SystemMenu,
+  value: number | undefined,
+) {
+  const order = value ?? 0;
+  if (order === (row.meta?.order ?? 0)) {
+    return;
+  }
+  try {
+    await updateMenuOrder(row.id, order);
+    ElMessage.success('排序已更新');
+  } finally {
+    gridApi.query();
   }
 }
 
@@ -120,6 +154,17 @@ function onCreate() {
           </div>
           <span class="flex-auto">{{ row.meta?.title }}</span>
         </div>
+      </template>
+      <template #order="{ row }">
+        <ElInputNumber
+          :model-value="row.meta?.order ?? 0"
+          :min="0"
+          :step="10"
+          controls-position="right"
+          size="small"
+          style="width: 90px"
+          @change="(val: any) => onOrderChange(row, val)"
+        />
       </template>
     </Grid>
   </Page>

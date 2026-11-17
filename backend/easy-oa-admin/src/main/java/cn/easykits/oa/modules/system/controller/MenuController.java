@@ -4,6 +4,7 @@ import cn.easykits.oa.common.api.Result;
 import cn.easykits.oa.common.context.UserContext;
 import cn.easykits.oa.entity.SysMenu;
 import cn.easykits.oa.modules.system.dto.MenuForm;
+import cn.easykits.oa.modules.system.dto.MenuSortItem;
 import cn.easykits.oa.modules.system.service.MenuService;
 import cn.easykits.oa.modules.system.vo.MenuRouteVO;
 import cn.easykits.oa.modules.system.vo.MenuVO;
@@ -90,6 +91,30 @@ public class MenuController {
     @PreAuthorize("hasAuthority('system:menu:delete')")
     public Result<Void> delete(@PathVariable Long id) {
         menuService.delete(id);
+        return Result.ok();
+    }
+
+    @Operation(summary = "菜单上移/下移（direction=up|down）")
+    @PostMapping("/{id}/move")
+    @PreAuthorize("hasAuthority('system:menu:update')")
+    public Result<Void> move(@PathVariable Long id, @RequestParam String direction) {
+        menuService.move(id, direction);
+        return Result.ok();
+    }
+
+    @Operation(summary = "设置菜单排序值")
+    @PutMapping("/{id}/order")
+    @PreAuthorize("hasAuthority('system:menu:update')")
+    public Result<Void> updateOrder(@PathVariable Long id, @RequestParam Integer order) {
+        menuService.updateOrderNo(id, order);
+        return Result.ok();
+    }
+
+    @Operation(summary = "拖拽排序（批量提交节点的新上级与同级顺序）")
+    @PutMapping("/sort")
+    @PreAuthorize("hasAuthority('system:menu:update')")
+    public Result<Void> sort(@RequestBody List<MenuSortItem> items) {
+        menuService.sort(items);
         return Result.ok();
     }
 }

@@ -46,6 +46,13 @@ export function useColumns(
       width: 100,
     },
     {
+      align: 'center',
+      field: 'meta.order',
+      slots: { default: 'order' },
+      title: $t('system.menu.order'),
+      width: 110,
+    },
+    {
       field: 'authCode',
       title: $t('system.menu.authCode'),
       width: 190,
@@ -98,6 +105,12 @@ export function useColumns(
             text: $t('system.menu.append'),
           },
           { code: 'edit', show: canUpdate },
+          { code: 'moveUp', show: canUpdate, text: $t('system.menu.moveUp') },
+          {
+            code: 'moveDown',
+            show: canUpdate,
+            text: $t('system.menu.moveDown'),
+          },
           { code: 'delete', show: canDelete },
         ],
       },
@@ -105,7 +118,7 @@ export function useColumns(
       fixed: 'right',
       title: $t('system.menu.operation'),
       visible: canCreate || canUpdate || canDelete,
-      width: 200,
+      width: 280,
     },
   ];
 }
