@@ -8,6 +8,7 @@ import ProfileBase from './base-setting.vue';
 import ProfileNotificationSetting from './notification-setting.vue';
 import ProfilePasswordSetting from './password-setting.vue';
 import ProfileSecuritySetting from './security-setting.vue';
+import ProfileWechatSetting from './wechat-setting.vue';
 
 const userStore = useUserStore();
 
@@ -21,6 +22,10 @@ const tabs = ref([
   {
     label: '安全设置',
     value: 'security',
+  },
+  {
+    label: '微信绑定',
+    value: 'wechat',
   },
   {
     label: '修改密码',
@@ -42,6 +47,7 @@ const tabs = ref([
     <template #content>
       <ProfileBase v-if="tabsValue === 'basic'" />
       <ProfileSecuritySetting v-if="tabsValue === 'security'" />
+      <ProfileWechatSetting v-if="tabsValue === 'wechat'" />
       <ProfilePasswordSetting v-if="tabsValue === 'password'" />
       <ProfileNotificationSetting v-if="tabsValue === 'notice'" />
     </template>

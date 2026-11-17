@@ -29,3 +29,15 @@ spring:
           min-idle: 0
 
 # SQL 日志由 logback 的 cn.easykits DEBUG 输出（日志实现走 SLF4J → Logback，不再用 StdOutImpl）
+
+oa:
+  wechat:
+    # 微信扫码登录总开关；false 时前端隐藏入口、后端拒绝全部微信端点
+    enabled: true
+    # mock 模式：跳过微信 API，以固定测试身份联调全流程（申请到 AppID 后置 false）
+    mock: true
+    appid: ${OA_WECHAT_APPID:}
+    secret: ${OA_WECHAT_SECRET:}
+    redirect-uri: ${OA_WECHAT_REDIRECT_URI:http://localhost:5778/auth/wechat/callback}
+    # OA 账号由管理员创建，禁止扫码自助注册
+    allow-register: false

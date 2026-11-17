@@ -68,6 +68,16 @@ const coreRoutes: RouteRecordRaw[] = [
           title: $t('page.auth.login'),
         },
       },
+      {
+        // 微信扫码登录回调页（免登录态）：处理 code 换登录态与未绑定的绑定引导
+        component: () => import('#/views/_core/authentication/wechat-callback.vue'),
+        meta: {
+          hideInTab: true,
+          title: '微信扫码登录',
+        },
+        name: 'WechatCallback',
+        path: 'wechat/callback',
+      },
     ],
   },
 ];

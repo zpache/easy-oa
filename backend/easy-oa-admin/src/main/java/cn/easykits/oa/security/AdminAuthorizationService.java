@@ -40,7 +40,14 @@ public class AdminAuthorizationService {
      * 用 token 中的用户 ID 回库刷新用户与角色；用户被删除或停用时返回 empty。
      */
     public Optional<LoginUser> resolveActiveUser(LoginUser tokenUser) {
-        SysUser user = sysUserMapper.selectById(tokenUser.userId());
+        return resolveById(tokenUser.userId());
+    }
+
+    /**
+     * 按用户 ID 加载启用账号与最新角色（微信扫码登录等免密认证路径使用）。
+     */
+    public Optional<LoginUser> resolveById(Long userId) {
+        SysUser user = sysUserMapper.selectById(userId);
         if (user == null || !Integer.valueOf(1).equals(user.getStatus())) {
             return Optional.empty();
         }

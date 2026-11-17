@@ -78,6 +78,34 @@ export const useAuthStore = defineStore('auth', () => {
     };
   }
 
+  /**
+   * 已拿到 accessToken 的登录收尾（微信扫码登录 / 绑定成功后使用）：
+   * 存 token → 拉用户信息与权限码 → 跳转首页。
+   */
+  async function loginByToken(token: string) {
+    accessStore.setAccessToken(token);
+    const [userInfo, accessCodes] = await Promise.all([
+      fetchUserInfo(),
+      getAccessCodesApi(),
+    ]);
+    userStore.setUserInfo(userInfo);
+    accessStore.setAccessCodes(accessCodes);
+
+    if (accessStore.loginExpired) {
+      accessStore.setLoginExpired(false);
+    } else {
+      await router.push(userInfo.homePath || preferences.app.defaultHomePath);
+    }
+
+    if (userInfo?.realName) {
+      ElNotification({
+        message: `${$t('authentication.loginSuccessDesc')}:${userInfo?.realName}`,
+        title: $t('authentication.loginSuccess'),
+        type: 'success',
+      });
+    }
+  }
+
   async function logout(redirect: boolean = true) {
     try {
       await logoutApi();
@@ -112,6 +140,7 @@ export const useAuthStore = defineStore('auth', () => {
     $reset,
     authLogin,
     fetchUserInfo,
+    loginByToken,
     loginLoading,
     logout,
   };

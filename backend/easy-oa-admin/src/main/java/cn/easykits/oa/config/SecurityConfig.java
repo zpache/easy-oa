@@ -37,9 +37,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    /** 白名单：登录、接口文档、健康检查、静态资源（预留） */
+    /** 白名单：登录、微信扫码登录（未登录态端点）、接口文档、健康检查、静态资源（预留） */
     private static final String[] WHITE_LIST = {
             "/auth/login",
+            "/auth/wechat/qr-login-url",
+            "/auth/wechat/login",
+            "/auth/wechat/bind",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
