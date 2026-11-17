@@ -18,7 +18,7 @@ import cn.easykits.oa.security.AdminAuthorizationService;
 import cn.easykits.oa.security.AdminUserDetails;
 import cn.easykits.oa.security.JwtTokenProvider;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
