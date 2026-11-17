@@ -107,6 +107,26 @@ const [Drawer, drawerApi] = useVbenDrawer({
     }
     formApi.resetForm();
     formData.value = null;
+    // 日历视图点空闲时段 / 点会议室带参打开时，预填会议室与时间段
+    const preset = drawerApi.getData<Record<string, any>>();
+    if (preset) {
+      const values: Record<string, any> = {};
+      if (preset.roomId) {
+        values.roomId = preset.roomId;
+      }
+      if (preset.startAt) {
+        values.startAt = preset.startAt;
+      }
+      if (preset.endAt) {
+        values.endAt = preset.endAt;
+      }
+      if (preset.title) {
+        values.title = preset.title;
+      }
+      if (Object.keys(values).length > 0) {
+        formApi.setValues(values);
+      }
+    }
   },
 });
 </script>
