@@ -37,27 +37,21 @@ CREATE TABLE IF NOT EXISTS sys_oauth_binding (
 
 约束：**一个 unionid 只能绑定一个 OA 账号**（唯一索引兜底）；一个账号同渠道最多一条绑定。
 
-## 3. 一次性票据表（替代 Redis）
+## 3. 一次性凭证存储（Redis，2026-11-17 确认引入）
 
-easy-oa 未接 Redis，扫码流程需要两处「一次性短时效凭证」，统一用票据表实现：
+easy-oa 引入 Redis（`spring-boot-starter-data-redis` + StringRedisTemplate），
+扫码流程的「一次性短时效凭证」全部走 Redis TTL key，不建表、无清理任务：
 
-```sql
-CREATE TABLE IF NOT EXISTS sys_oauth_ticket (
-    id         bigint      NOT NULL AUTO_INCREMENT,
-    ticket     varchar(64) NOT NULL COMMENT '随机串（state 或 bindTicket）',
-    scene      varchar(20) NOT NULL COMMENT 'qr_state 扫码防CSRF / bind 绑定暂存',
-    payload    json        DEFAULT NULL COMMENT 'scene=bind 时暂存 openid/unionid/昵称',
-    expire_at  datetime    NOT NULL,
-    used_at    datetime    DEFAULT NULL COMMENT '非空即已消费',
-    created_at datetime    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id),
-    UNIQUE KEY uk_ticket (ticket),
-    KEY idx_expire (expire_at)
-) COMMENT = 'OAuth 一次性票据';
-```
+| Key | 值 | TTL | 用途 |
+| --- | --- | --- | --- |
+| `oa:qr:state:{state}` | `login` 或 `bind`（场景标记） | 5 分钟 | 授权链接防 CSRF，回调消费即 DEL |
+| `oa:qr:bind:{bindTicket}` | JSON：openid/unionid/昵称/头像 | 10 分钟 | 未命中绑定时的微信身份暂存，绑定成功即 DEL |
 
-- `state`：生成授权链接时创建，回调消费后标记 used，TTL 5 分钟；过期定时清理（每日任务或插入时顺带删除过期行）。
-- `bindTicket`：登录扫码未命中绑定时生成，payload 暂存微信身份，TTL 10 分钟，绑定成功即消费。
+- **消费即删除**（`GETDEL`，Redis ≥6.2）或 `GET` 后 `DEL`，天然防重放；key 不存在即过期/已用。
+- `DEL`/`SETEX` 均为原子操作，无需定时清理。
+- Redis 连接配置走 `spring.data.redis.*`，密码等环境变量注入（`OA_REDIS_HOST/PORT/PASSWORD`）；
+  与 easy-mall 云实例一致的做法，本地 dev 可指向本机 Redis。
+- Redis 短暂不可用时的降级策略：登录页隐藏微信入口（`WechatLoginService` 对 Redis 异常做健康检查），不影响账号密码登录主链路。
 
 ## 4. 三个流程
 
@@ -110,9 +104,10 @@ GET  /oa/auth/wechat/binding       （登录态）→ { bound, wxNickname, wxAva
 
 | 项 | 内容 |
 | --- | --- |
-| 迁移脚本 | `db/migrations/2026MMDD_wechat_login.sql`（sys_oauth_binding + sys_oauth_ticket） |
+| 迁移脚本 | `db/migrations/2026MMDD_wechat_login.sql`（仅 sys_oauth_binding） |
+| Redis | pom 增 `spring-boot-starter-data-redis`；`application.yml` 增 `spring.data.redis.*`（环境变量覆盖） |
 | 配置 | `WechatLoginProperties`：enabled / appid / secret / redirect-uri / allow-register；`oa.wechat.*`，环境变量覆盖 |
-| 服务 | `modules/auth/service/WechatLoginService`：qrUrl(state)、loginByCode、bindByUsername、bindByLoginState、unbind、bindingInfo；票据 CRUD 封装 `OAuthTicketService`（消费 = update where used_at is null，乐观防重放） |
+| 服务 | `modules/auth/service/WechatLoginService`：qrUrl(state)、loginByCode、bindByUsername、bindByLoginState、unbind、bindingInfo；state/bindTicket 走 StringRedisTemplate（GETDEL 消费） |
 | HTTP 客户端 | Spring RestClient 调微信 API（connect timeout 3s / read 5s，不重试——code 一次性，重试会 40163） |
 | 控制器 | AuthController 扩展 qr-login-url / login / bind；个人中心 BindingController（binding / qr-bind-url / bind-confirm / unbind） |
 | 安全 | 全部微信端点进免鉴权白名单（login/qr-login-url/bind）；bind 走密码验证复用 LoginAttemptService；登录日志补 `way=wechat-scan/bind` |

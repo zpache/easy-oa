@@ -4,3 +4,9 @@
 spring:
   datasource:
     password: your-local-password
+  data:
+    redis:
+      host: your-redis-host
+      port: 6379
+      password: your-redis-password
+      database: 5

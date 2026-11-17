@@ -12,5 +12,20 @@ spring:
       connection-timeout: 30000
       idle-timeout: 600000
       max-lifetime: 1800000
+  data:
+    redis:
+      # Redis 用于微信扫码登录的一次性凭证（state / bindTicket）等短时效数据
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      # 密码不落仓库：由环境变量 REDIS_PASSWORD 注入，
+      # 或写在 gitignore 的 application-local.yml 里（profile: local，本地默认激活）
+      password: ${REDIS_PASSWORD:}
+      database: ${REDIS_DATABASE:0}
+      timeout: 3s
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 4
+          min-idle: 0
 
 # SQL 日志由 logback 的 cn.easykits DEBUG 输出（日志实现走 SLF4J → Logback，不再用 StdOutImpl）
