@@ -102,6 +102,11 @@ export function useColumns(
       width: 170,
     },
     {
+      field: 'createdAt',
+      title: '申请时间',
+      width: 170,
+    },
+    {
       cellRender: {
         name: 'CellTag',
       },

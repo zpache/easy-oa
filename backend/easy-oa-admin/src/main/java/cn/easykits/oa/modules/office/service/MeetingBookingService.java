@@ -46,7 +46,11 @@ public class MeetingBookingService extends ServiceImpl<OfficeMeetingBookingMappe
                         .le(endDate != null, OfficeMeetingBooking::getStartAt, endDate)
                         .eq(status != null, OfficeMeetingBooking::getStatus, status)
                         .eq(userId != null, OfficeMeetingBooking::getUserId, userId)
-                        .orderByAsc(OfficeMeetingBooking::getStartAt));
+                        // 列表按申请（提交）时间倒序，最新的预约排在最前；
+                        // id 兜底保证同一秒内创建的记录顺序稳定。
+                        // 日历视图不依赖后端顺序（前端按 startAt 自行排序并铺排）。
+                        .orderByDesc(OfficeMeetingBooking::getCreatedAt)
+                        .orderByDesc(OfficeMeetingBooking::getId));
         return PageResult.of(page, this::toVO);
     }
 
