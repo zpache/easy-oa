@@ -85,7 +85,7 @@ watch(
         :avatar
         :menus
         :text="userStore.userInfo?.realName"
-        description="Easy OA Admin"
+        description="Easy OA"
         tag-text="Pro"
         @logout="handleLogout"
         @clear-preferences-and-logout="handleLogout"

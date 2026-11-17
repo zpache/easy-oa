@@ -23,7 +23,7 @@ export const overridesPreferences = defineOverridesPreferences({
   },
   copyright: {
     // 登录页与页脚共用的版权文案：公司名与站点链接不覆盖会回落到框架默认的 Vben
-    companyName: 'Easy OA Admin',
+    companyName: 'Easy OA',
     companySiteLink: '',
     date: '2026',
   },

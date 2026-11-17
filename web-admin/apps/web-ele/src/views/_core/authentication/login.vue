@@ -121,6 +121,8 @@ function onIframeLoad(event: Event) {
     :show-qrcode-login="false"
     :show-register="false"
     :show-third-party-login="false"
+    :sub-title="$t('authentication.loginSubtitle')"
+    :title="$t('authentication.welcomeBack')"
     @submit="authStore.authLogin"
   >
     <template #third-party-login>
