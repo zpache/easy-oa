@@ -90,6 +90,8 @@
     </dependencies>
 
     <build>
+        <!-- 固定产物名：打包生成 easy-oa-admin.jar（不带版本号），部署脚本与文档不用跟着版本变 -->
+        <finalName>easy-oa-admin</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
