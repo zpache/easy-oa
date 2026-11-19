@@ -7,10 +7,10 @@
 > 仓库结构：
 > ```
 > easy-oa/
-> ├── backend/            # Maven 单体多模块（当前：easy-oa-admin，端口 8091，context-path /oa）
+> ├── backend/            # Maven 单体多模块（当前：easy-oa-admin，端口 8091，context-path /）
 > ├── db/                 # easy_oa.sql 建库脚本 + migrations/ 幂等增量迁移
 > ├── docs/               # 设计文档
-> └── web-admin/          # 管理后台前端（@easy-oa/web-ele，dev 端口 5778，代理 /oa → 8091）
+> └── web-admin/          # 管理后台前端（@easy-oa/web-ele，dev 端口 5778，代理 /oa（rewrite 去前缀）→ 8091）
 > ```
 
 ## 分期与功能清单

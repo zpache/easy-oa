@@ -59,14 +59,14 @@ easy-oa 引入 Redis（`spring-boot-starter-data-redis` + StringRedisTemplate）
 
 ```
 登录页点「微信扫码登录」
-  → GET /oa/auth/wechat/qr-login-url
+  → GET /auth/wechat/qr-login-url
   → 后端生成 state（scene=qr_state），拼微信开放平台授权 URL：
     https://open.weixin.qq.com/connect/qrconnect
       ?appid={appid}&redirect_uri={redirect_uri}&response_type=code
       &scope=snsapi_login&state={state}#wechat_redirect
   → 前端 iframe 展示二维码，用户扫码确认
   → 微信 302 到 redirect_uri（前端路由 /auth/wechat/callback?code=xx&state=xx）
-  → 回调页 POST /oa/auth/wechat/login { code, state }：
+  → 回调页 POST /auth/wechat/login { code, state }：
       1. 校验 state（存在、未过期、未使用）→ 消费
       2. code + secret 调 sns/oauth2/access_token 换 openid/unionid
       3. 调 sns/userinfo 取昵称头像（可选，失败不阻断）
@@ -79,7 +79,7 @@ easy-oa 引入 Redis（`spring-boot-starter-data-redis` + StringRedisTemplate）
 ### 4.2 绑定引导（未绑定扫码后）
 
 ```
-POST /oa/auth/wechat/bind { bindTicket, username, password, captcha? }
+POST /auth/wechat/bind { bindTicket, username, password, captcha? }
   1. 校验 bindTicket（未过期未使用）→ 消费
   2. 账号密码校验 —— 复用登录防爆破（5 次锁 15 分钟）与密码校验逻辑
   3. 校验该微信身份未被他人绑定（唯一索引兜底）
@@ -91,11 +91,11 @@ POST /oa/auth/wechat/bind { bindTicket, username, password, captcha? }
 ### 4.3 已登录主动绑定 / 解绑（个人中心）
 
 ```
-POST /oa/auth/wechat/qr-bind-url   （登录态）→ 同 4.1 的授权 URL，state scene=qr_state
-POST /oa/auth/wechat/bind-confirm { code, state } （登录态）
+POST /auth/wechat/qr-bind-url   （登录态）→ 同 4.1 的授权 URL，state scene=qr_state
+POST /auth/wechat/bind-confirm { code, state } （登录态）
   → 换取 unionid → 校验未被他人绑定 → 写绑定表
-DELETE /oa/auth/wechat/bind        （登录态）→ 解绑当前账号的 wechat_open 绑定
-GET  /oa/auth/wechat/binding       （登录态）→ { bound, wxNickname, wxAvatar, boundAt }
+DELETE /auth/wechat/bind        （登录态）→ 解绑当前账号的 wechat_open 绑定
+GET  /auth/wechat/binding       （登录态）→ { bound, wxNickname, wxAvatar, boundAt }
 ```
 
 解绑前提示：若账号已停用密码登录（未来若有此开关），不允许解绑最后一种登录方式；当前版本仅提示不强制。

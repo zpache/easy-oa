@@ -4,7 +4,7 @@
 
 - **后端**：Java 25 + Spring Boot 4.1.2 + MyBatis-Plus + MySQL，Spring Security + JWT 无状态认证
 - **前端**：Vue3 + Vben Admin（Element Plus），动态菜单/按钮权限
-- **端口**：后端接口服务 `8091`（context-path `/oa`），前端 dev server `5778`
+- **端口**：后端接口服务 `8091`（context-path `/`），前端 dev server `5778`
 
 ## 模块
 
@@ -28,7 +28,7 @@ cp backend/easy-oa-admin/src/main/resources/application-local.yml.example \
 
 # 3. 启动后端
 cd backend && mvn -pl easy-oa-admin spring-boot:run
-# 接口文档 http://localhost:8091/oa/swagger-ui.html
+# 接口文档 http://localhost:8091/swagger-ui.html
 
 # 4. 前端（pnpm workspace，依赖已在 node_modules 就绪）
 cd web-admin && pnpm -F @easy-oa/web-ele run dev

@@ -2,7 +2,7 @@ server:
   # easy-mall admin 占用 8081，OA 管理端错开到 8091
   port: 8091
   servlet:
-    context-path: /oa
+    context-path: /
     encoding:
       charset: UTF-8
       force: true
